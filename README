@@ -1,0 +1,30 @@
+CS214 Project 2: File Similarity
+Hunter Yee hy458
+Alban Gurra ag2302
+
+How to run:
+In terminal run:
+    make
+    ./compare ../test_files    # where test_files is a folder in the same folder as P2 containing various random test files (.c, .txt...)
+
+
+Test Plan:
+First we decided it was best to start with choosing/creating a data structure for this project.
+We decided on a linked list to represent the WFD for each file.
+We chose this because we are familiar with it and it makes sense for the project since we can dynamically insert words making it easily to maintain alphabetical order.
+Also, storing 'count' and 'frequency' inside the node allows us to do division once per word after reading the file, rather than recalculating it repeatedly later on.
+
+To manage the files, we used a dynamically resizing array of 'FileInfo' structs. This allows the program to handle an arbitrary number of files without hardcoded limits. The JSD results are stored in an array of 'Comparison' structs, which makes it easier to user qsort() to order the final output by combined word count.
+
+Using the POSIX open(), read(), and close() functions, we were able to process files in 4096-byte chunks. Because we aren't given a max word length, the tokenization logic uses a dynamically resizing character buffer (`realloc') that safely builds words character-by-character, ignoring punctuation and converting everything to lowercase.
+
+Our linked lists are built in alphabetical order so the KLD and JSD run in O(n) time per file pair.
+
+We created a bunch of sample test cases in seperate folders. These test cases include:
+
+Testing against the exact example provided in the project PDF ("hi there hi there" vs "hi hi out there") to ensure our JSD calculations and logarithmic scaling precisely matched the expected output of ~0.3945.
+Created folders within folders containing hidden files (starting with '.'), hidden directories, and files with incorrect extensions (.c files mixed with .txt files). 
+We had test files with symbols, commas, and mixed casing to ensure they were stripped out and converted correctly.
+We made sure that alphanumeric characters and hyphens (e.g., "Catch-22") were successfully parsed as single, unbroken words.
+We tested files containing words over 100 characters long to guarantee our dynamic memory reallocation wouldn't trigger a segmentation fault.
+We also tested empty files and files containg only punctuation.
